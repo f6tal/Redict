@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alaska Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .word-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed inset-0 bg-black overflow-hidden">
+        <div class="absolute inset-0 flex items-center justify-center">
+            <img
+                id="mainImage"
+                src="anime-bear.jpeg"
+                alt="Alaska"
+                class="max-w-full max-h-full object-contain"
+            />
+        </div>
+        
+        <div id="wordsContainer"></div>
+        
+        <audio id="backgroundAudio" loop class="hidden" preload="auto">
+            <source src="creepy-girl.mp3" type="audio/mpeg" />
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <script>
+
+        let currentImage = 0;
+        let words = [];
+        const images = ["anime-bear.jpeg", "scary-face.jpeg"];
+
+        const audioElement = document.getElementById('backgroundAudio');
+        const imageElement = document.getElementById('mainImage');
+        const wordsContainer = document.getElementById('wordsContainer');
+        
+
+        window.addEventListener('load', () => {
+            audioElement.play().catch(console.error);
+        });
+        
+ 
+        function switchImage() {
+            currentImage = currentImage === 0 ? 1 : 0;
+            imageElement.src = images[currentImage];
+            console.log("Switching from", currentImage === 0 ? 1 : 0, "to", currentImage);
+        }
+        
+
+        function addWord() {
+            const newWord = {
+                id: Math.random(),
+                top: Math.random() * 90 + '%',
+                left: Math.random() * 90 + '%'
+            };
+            words.push(newWord);
+            
+
+            const wordElement = document.createElement('div');
+            wordElement.className = 'absolute text-red-600 font-bold text-4xl pointer-events-none word-shadow';
+            wordElement.style.top = newWord.top;
+            wordElement.style.left = newWord.left;
+            wordElement.textContent = 'ALASKA';
+            wordElement.setAttribute('data-id', newWord.id);
+            
+            wordsContainer.appendChild(wordElement);
+        }
+        
+
+        function cleanupWords() {
+            if (words.length > 50) {
+                const wordsToRemove = words.length - 50;
+                
+
+                const removedWords = words.splice(0, wordsToRemove);
+
+                removedWords.forEach(word => {
+                    const element = document.querySelector(`[data-id="${word.id}"]`);
+                    if (element) {
+                        element.remove();
+                    }
+                });
+            }
+        }
+        
+        const imageInterval = setInterval(switchImage, 1000);
+        const wordInterval = setInterval(addWord, 300);
+        const cleanupInterval = setInterval(cleanupWords, 5000);
+        
+        window.addEventListener('beforeunload', () => {
+            clearInterval(imageInterval);
+            clearInterval(wordInterval);
+            clearInterval(cleanupInterval);
+        });
+        
+        console.log("Current image index:", currentImage, "Image path:", images[currentImage]);
+    </script>
+</body>
+</html>
